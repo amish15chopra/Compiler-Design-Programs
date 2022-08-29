@@ -1,0 +1,61 @@
+%{
+#include<stdio.h>
+#include<stdlib.h>
+int yylex();
+int yyerror();
+int count=0;
+%}
+
+%token ID NUM FOR LT GT LE GE EQ NE
+%left LT GT LE GE EQ NE
+
+%%
+S : ST 
+ST : FOR'('E';'COMPARE';'E')' BOD {count++;} 
+	;
+BOD : '{'BODY'}'
+	| E';'
+	| ST
+	|
+	;
+BODY : BODY BODY 
+	| E';'
+	| ST
+	|
+	;
+COMPARE : E LT E
+	| E GT E
+	| E LE E
+	| E GE E
+	| E EQ E
+	| E NE E
+	;
+E : ID'='E
+	| E'+'E
+	| E'-'E
+	| E'*'E
+	| E'/'E
+	| E'+''+'
+	| E'-''-'
+	| ID
+	| NUM
+	;
+%%
+
+#include <stdio.h>
+extern int yylex();
+extern int yyparse();
+extern FILE *yyin;
+
+void main() {	
+	//yyin = fopen("input.c","r");
+	printf("Enter the exp: \n");
+	yyparse();
+	printf("Valid input\n");
+	printf("Number of nested for loops is %d\n",count);
+}
+
+int yyerror() {
+	printf("Invalid input\n");
+	exit(0);
+}

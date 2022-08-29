@@ -1,0 +1,89 @@
+%{
+#include<stdio.h>
+#include<stdlib.h>
+%}
+
+%token FOR WHILE TYPE IF RETURN NUM ID RELOP
+%right '='
+%left LT GT LE GE EQ NE
+%left '+' '-'
+%left '*' '/'
+%left '!'
+
+%%
+S : FUN {printf("Valid Input - accepted\n"); exit(0);}
+
+FUN : TYPE ID '(' PARAMS ')' '{' BODY '}';
+
+PARAMS : TYPE ID ',' PARAMS
+	| ;
+	
+BODY : BODY BODY
+	| PARAMS ';'
+	| E ';'
+	| RETURN E ';'
+	| FLOOP
+	| WLOOP
+	| IFCOND
+	| ;
+	
+FLOOP : FOR'('E';'COMPARE';'E')' BOD
+	
+WLOOP : WHILE '(' COMPARE ')' BOD
+
+IFCOND : IF '(' E ')' BOD
+
+BOD : '{' LOOPBODY '}'
+	| '{' IFBODY '}'
+	| E';'
+	| FLOOP
+	| WLOOP
+	| IFCOND
+	|
+	;
+
+LOOPBODY : LOOPBODY LOOPBODY 
+	| E';'
+	| ST
+	|
+	;
+	
+IFBODY : IFBODY IFBODY
+	| E';'
+	| IFCOND
+	;
+	
+COMPARE : E LT E
+	| E GT E
+	| E LE E
+	| E GE E
+	| E EQ E
+	| E NE E
+	;
+	
+E : ID'='E
+	| E'+'E
+	| E'-'E
+	| E'*'E
+	| E'/'E
+	| E'+''+'
+	| E'-''-'
+	| ID
+	| NUM
+	;
+	
+#include <stdio.h>
+
+extern int yylex();
+extern int yyparse();
+extern FILE *yyin;
+
+void main() {
+	yyin = fopen("input.c", "r");
+	yyparse();
+}
+
+int yyerror() {
+	printf("Invalid input\n");
+	exit(0);
+}

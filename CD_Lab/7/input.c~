@@ -1,0 +1,4 @@
+float func(int){
+	int sum;
+	return sum/n;
+}
